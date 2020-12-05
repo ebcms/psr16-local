@@ -23,8 +23,8 @@ class LocalAdapter implements CacheInterface
 
     public function get($key, $default = null)
     {
+        $file = $this->getCacheFile($key);
         try {
-            $file = $this->getCacheFile($key);
             if (!file_exists($file)) {
                 return $default;
             }
@@ -41,13 +41,14 @@ class LocalAdapter implements CacheInterface
 
     public function set($key, $value, $ttl = null)
     {
+        $file = $this->getCacheFile($key);
         try {
             $cache = [
                 'key' => $key,
                 'ttl' => $ttl ? time() + $ttl : 9999999999,
                 'value' => $value,
             ];
-            return file_put_contents($this->getCacheFile($key), serialize($cache));
+            return file_put_contents($file, serialize($cache));
         } catch (\Throwable $th) {
             return false;
         }
@@ -55,8 +56,8 @@ class LocalAdapter implements CacheInterface
 
     public function delete($key)
     {
+        $file = $this->getCacheFile($key);
         try {
-            $file = $this->getCacheFile($key);
             if (file_exists($file)) {
                 return unlink($file);
             }
@@ -118,8 +119,8 @@ class LocalAdapter implements CacheInterface
 
     public function has($key)
     {
+        $file = $this->getCacheFile($key);
         try {
-            $file = $this->getCacheFile($key);
             if (!file_exists($file)) {
                 return false;
             }
